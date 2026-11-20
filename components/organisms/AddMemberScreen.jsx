@@ -4,348 +4,386 @@ import { useState } from "react";
 export default function AddMemberScreen({
   selectedPlan,
   onBackToMembers,
-  onMemberCreated,
+  onMemberSaved,
 }) {
-  const [form, setForm] = useState({
-    name: "",
-    avatar: "",
-    mobile: "",
-    gender: "Male",
-    memberNo: "12",
-    height: "",
-    weight: "",
-    chest: "",
-    waist: "",
-    birthDate: "",
-    address: "",
-    trainingType: "Trainer",
-    planLabel: selectedPlan ? selectedPlan.name : "General [ 800 ]",
-    batchTime: "6.00am to 7.00am",
-    joiningDate: "1/9/23 To 1/10/23",
-    paidAmount: "",
-    dueAmount: "0",
-    paymentMethod: "Cash",
-  });
+  const [name, setName] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [gender, setGender] = useState("Masculino");
+  const [memberNo, setMemberNo] = useState("12");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [chest, setChest] = useState("");
+  const [waist, setWaist] = useState("");
+  const [dob, setDob] = useState("");
+  const [address, setAddress] = useState("");
+  const [training, setTraining] = useState("Entrenador");
+  const [plan, setPlan] = useState(selectedPlan?.name || "DORADO");
+  const [batchTime, setBatchTime] = useState("6.00am to 7.00am");
+  const [joiningDate, setJoiningDate] = useState("1/9/23");
+  const [expiryDate, setExpiryDate] = useState("1/10/23");
+  const [paidAmount, setPaidAmount] = useState("");
+  const [dueAmount, setDueAmount] = useState("0");
+  const [paymentMethod, setPaymentMethod] = useState("Efectivo");
 
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  }
+  const [errorMsg, setErrorMsg] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setSaving(true);
-    setError("");
+    setErrorMsg("");
+
+    if (!name.trim()) {
+      setErrorMsg("Ingresa el nombre completo");
+      return;
+    }
+
+    const apiUrl = process.env.NEXT_PUBLIC_MEMBERS_API_URL;
+    if (!apiUrl) {
+      setErrorMsg("Falta NEXT_PUBLIC_MEMBERS_API_URL en .env.local");
+      return;
+    }
+
+    const fallbackAvatar = `https://i.pravatar.cc/150?u=${encodeURIComponent(
+      `${name.trim()}-${memberNo || Date.now()}`
+    )}`;
 
     const payload = {
-      name: form.name.trim() || "New Member",
-      avatar:
-        form.avatar.trim() ||
-        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=150&q=80",
-      mobile: form.mobile.trim(),
-      gender: form.gender,
-      memberNo: form.memberNo,
-      height: form.height,
-      weight: form.weight,
-      chest: form.chest,
-      waist: form.waist,
-      birthDate: form.birthDate,
-      address: form.address,
-      trainingType: form.trainingType,
-      plan: form.planLabel,
-      batchTime: form.batchTime,
-      joiningDate: form.joiningDate,
-      paidAmount: Number(form.paidAmount) || 0,
-      dueAmount: Number(form.dueAmount) || 0,
-      paymentMethod: form.paymentMethod,
+      name: name.trim(),
+      avatar: photoUrl.trim() || fallbackAvatar,
+      mobile: mobile.trim(),
+      gender,
+      memberNo: memberNo.trim() || String(Date.now()),
+      measurements: {
+        height: height.trim(),
+        weight: weight.trim(),
+        chest: chest.trim(),
+        waist: waist.trim(),
+      },
+      dob: dob.trim(),
+      address: address.trim(),
+      training,
+      plan,
+      batchTime,
+      joiningDate: joiningDate.trim(),
+      expiryDate: expiryDate.trim() || "01 Sep 2026",
+      paidAmount: Number(paidAmount) || 0,
+      dueAmount: Number(dueAmount) || 0,
+      paymentMethod,
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_MEMBERS_API_URL}/members`, {
+      setSaving(true);
+      const res = await fetch(`${apiUrl}/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        throw new Error("No se pudo guardar el miembro en la API");
+        throw new Error("No se pudo guardar en MockAPI");
       }
 
       setSaving(false);
-      if (onMemberCreated) onMemberCreated();
-      onBackToMembers();
+      if (onMemberSaved) {
+        onMemberSaved();
+      } else if (onBackToMembers) {
+        onBackToMembers();
+      }
     } catch (err) {
-      setError(err.message);
       setSaving(false);
+      setErrorMsg(err.message || "Error al guardar");
     }
   }
 
   return (
-    <div className="flex flex-col min-h-[760px] bg-[#090909] text-white border border-neutral-800 rounded-2xl overflow-hidden">
-      {/* Barra superior verde lima con flecha < */}
-      <header className="bg-[#84CC16] text-black px-4 py-3 flex items-center justify-between">
+    <div className="relative flex flex-col h-full bg-[#090909] text-white overflow-hidden">
+      <header className="bg-[#84CC16] text-black px-4 py-2.5 flex items-center justify-between shrink-0">
         <button
           type="button"
           onClick={onBackToMembers}
-          className="text-xl font-extrabold leading-none px-1 cursor-pointer"
-          title="Back"
+          title="Volver"
+          className="text-xl font-extrabold px-1 hover:bg-black/10 rounded cursor-pointer"
         >
           &lt;
         </button>
-        <span className="font-extrabold text-sm">Add Member</span>
-        <span className="w-4" />
+        <h1 className="text-sm font-extrabold">Agregar miembro</h1>
+        <span className="w-5" />
       </header>
 
-      <form onSubmit={handleSubmit} className="flex-1 p-4 space-y-3 text-xs overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Name -:</label>
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 overflow-y-auto px-4 py-3 space-y-3 text-xs pb-10"
+      >
+        {errorMsg && (
+          <div className="px-2.5 py-1.5 rounded bg-red-950/80 border border-red-500 text-red-200 text-[11px]">
+            {errorMsg}
+          </div>
+        )}
+
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Nombre -:
+          </label>
           <input
             type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Full name"
-            className="flex-1 bg-transparent border-b border-neutral-600 focus:border-[#84CC16] focus:outline-none py-1 text-white"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nombre completo"
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Upload Photo -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Subir foto -:
+          </label>
           <input
             type="text"
-            name="avatar"
-            value={form.avatar}
-            onChange={handleChange}
-            placeholder="Photo URL (optional)"
-            className="flex-1 bg-[#161616] border border-neutral-700 rounded px-2 py-1 text-white"
+            value={photoUrl}
+            onChange={(e) => setPhotoUrl(e.target.value)}
+            placeholder="URL de la foto (opcional)"
+            className="flex-1 bg-[#141414] border border-neutral-800 rounded px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Mobile No. -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Número de móvil -:
+          </label>
           <input
-            type="text"
-            name="mobile"
-            value={form.mobile}
-            onChange={handleChange}
-            placeholder="Phone number"
-            className="flex-1 bg-transparent border-b border-neutral-600 focus:border-[#84CC16] focus:outline-none py-1 text-white"
+            type="tel"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            placeholder="Número de teléfono"
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <span className="text-neutral-200 w-32">Gender -:</span>
-          <div className="flex-1 flex items-center gap-5">
-            <label className="flex items-center gap-1.5 cursor-pointer">
-              <input
-                type="radio"
-                name="gender"
-                value="Male"
-                checked={form.gender === "Male"}
-                onChange={handleChange}
-              />
-              <span>Male</span>
-            </label>
-            <label className="flex items-center gap-1.5 cursor-pointer">
-              <input
-                type="radio"
-                name="gender"
-                value="Female"
-                checked={form.gender === "Female"}
-                onChange={handleChange}
-              />
-              <span>Female</span>
-            </label>
+        <div className="flex items-center gap-4 py-0.5">
+          <span className="w-28 text-[#84CC16] font-bold shrink-0">
+            Género -:
+          </span>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="radio"
+              name="gender"
+              value="Masculino"
+              checked={gender === "Masculino"}
+              onChange={(e) => setGender(e.target.value)}
+              className="accent-blue-500"
+            />
+            <span className="text-white font-semibold">Masculino</span>
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="radio"
+              name="gender"
+              value="Mujer"
+              checked={gender === "Mujer"}
+              onChange={(e) => setGender(e.target.value)}
+              className="accent-blue-500"
+            />
+            <span className="text-white font-semibold">Mujer</span>
+          </label>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Número de miembro:
+          </label>
+          <input
+            type="text"
+            value={memberNo}
+            onChange={(e) => setMemberNo(e.target.value)}
+            className="flex-1 bg-transparent border-b border-neutral-700 text-[#84CC16] font-bold py-1 focus:outline-none focus:border-[#84CC16]"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <div className="text-[#84CC16] font-bold">Medición -:</div>
+          <div className="pl-2 grid grid-cols-2 gap-3 text-[11px]">
+            <input
+              type="text"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              placeholder="Altura"
+              className="bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
+            />
+            <input
+              type="text"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              placeholder="Peso"
+              className="bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
+            />
+            <input
+              type="text"
+              value={chest}
+              onChange={(e) => setChest(e.target.value)}
+              placeholder="Cofre"
+              className="bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
+            />
+            <input
+              type="text"
+              value={waist}
+              onChange={(e) => setWaist(e.target.value)}
+              placeholder="Cintura"
+              className="bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
+            />
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Member No -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Fecha de nacimiento -:
+          </label>
           <input
             type="text"
-            name="memberNo"
-            value={form.memberNo}
-            onChange={handleChange}
-            className="flex-1 bg-transparent text-[#84CC16] font-bold border-b border-neutral-600 focus:outline-none py-1"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+            placeholder="DD/MM/AAAA"
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="border-b border-neutral-800 pb-2 space-y-1.5">
-          <p className="text-neutral-200">Measurement -:</p>
-          <div className="grid grid-cols-2 gap-2 pl-4">
-            <input
-              type="text"
-              name="height"
-              value={form.height}
-              onChange={handleChange}
-              placeholder="Height"
-              className="bg-transparent border-b border-neutral-700 py-0.5 text-white focus:outline-none"
-            />
-            <input
-              type="text"
-              name="weight"
-              value={form.weight}
-              onChange={handleChange}
-              placeholder="Weight"
-              className="bg-transparent border-b border-neutral-700 py-0.5 text-white focus:outline-none"
-            />
-            <input
-              type="text"
-              name="chest"
-              value={form.chest}
-              onChange={handleChange}
-              placeholder="Chest"
-              className="bg-transparent border-b border-neutral-700 py-0.5 text-white focus:outline-none"
-            />
-            <input
-              type="text"
-              name="waist"
-              value={form.waist}
-              onChange={handleChange}
-              placeholder="Waist"
-              className="bg-transparent border-b border-neutral-700 py-0.5 text-white focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Date of Birth -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Dirección -:
+          </label>
           <input
             type="text"
-            name="birthDate"
-            value={form.birthDate}
-            onChange={handleChange}
-            placeholder="DD/MM/YYYY"
-            className="flex-1 bg-transparent border-b border-neutral-600 py-1 text-white focus:outline-none"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Dirección"
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Address -:</label>
-          <input
-            type="text"
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-            placeholder="Address"
-            className="flex-1 bg-transparent border-b border-neutral-600 py-1 text-white focus:outline-none"
-          />
+        <div className="flex items-center gap-4 py-0.5">
+          <span className="w-28 text-[#84CC16] font-bold shrink-0">
+            Entrenamiento -:
+          </span>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="radio"
+              name="training"
+              value="Entrenador"
+              checked={training === "Entrenador"}
+              onChange={(e) => setTraining(e.target.value)}
+              className="accent-blue-500"
+            />
+            <span className="text-white font-semibold">Entrenador</span>
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="radio"
+              name="training"
+              value="Personal"
+              checked={training === "Personal"}
+              onChange={(e) => setTraining(e.target.value)}
+              className="accent-blue-500"
+            />
+            <span className="text-white font-semibold">Personal</span>
+          </label>
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <span className="text-neutral-200 w-32">Training -:</span>
-          <div className="flex-1 flex items-center gap-5">
-            <label className="flex items-center gap-1.5 cursor-pointer">
-              <input
-                type="radio"
-                name="trainingType"
-                value="Trainer"
-                checked={form.trainingType === "Trainer"}
-                onChange={handleChange}
-              />
-              <span>Trainer</span>
-            </label>
-            <label className="flex items-center gap-1.5 cursor-pointer">
-              <input
-                type="radio"
-                name="trainingType"
-                value="Personal"
-                checked={form.trainingType === "Personal"}
-                onChange={handleChange}
-              />
-              <span>Personal</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Plan -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Plan -:
+          </label>
           <select
-            name="planLabel"
-            value={form.planLabel}
-            onChange={handleChange}
-            className="flex-1 bg-[#141414] text-[#84CC16] font-semibold border border-neutral-700 rounded px-2 py-1"
+            value={plan}
+            onChange={(e) => setPlan(e.target.value)}
+            className="flex-1 bg-[#141414] border border-neutral-700 rounded px-2.5 py-1.5 text-[#84CC16] font-bold focus:outline-none"
           >
-            <option value={selectedPlan ? selectedPlan.name : "General [ 800 ]"}>
-              {selectedPlan ? selectedPlan.name : "General [ 800 ]"}
-            </option>
-            <option value="STANDARD">STANDARD</option>
+            <option value="DORADO">DORADO</option>
+            <option value="ESTÁNDAR">ESTÁNDAR</option>
             <option value="PREMIUM">PREMIUM</option>
-            <option value="GOLDEN">GOLDEN</option>
+            <option value="General [ 800 ]">General [ 800 ]</option>
           </select>
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Batch Time -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0 leading-tight">
+            Tiempo de procesamiento por lotes:
+          </label>
           <input
             type="text"
-            name="batchTime"
-            value={form.batchTime}
-            onChange={handleChange}
-            className="flex-1 bg-transparent border-b border-neutral-600 py-1 text-white focus:outline-none"
+            value={batchTime}
+            onChange={(e) => setBatchTime(e.target.value)}
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Joining Date -:</label>
+        <div className="flex items-center gap-2 text-[11px]">
+          <span className="w-28 text-[#84CC16] font-bold shrink-0">
+            Fecha de ingreso:
+          </span>
           <input
             type="text"
-            name="joiningDate"
-            value={form.joiningDate}
-            onChange={handleChange}
-            className="flex-1 bg-transparent border-b border-neutral-600 py-1 text-white focus:outline-none"
+            value={joiningDate}
+            onChange={(e) => setJoiningDate(e.target.value)}
+            className="w-16 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none"
+          />
+          <span className="text-neutral-300 font-semibold">To</span>
+          <input
+            type="text"
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
+            className="w-16 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Paid Amount -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Importe pagado -:
+          </label>
           <input
             type="number"
-            name="paidAmount"
-            value={form.paidAmount}
-            onChange={handleChange}
+            value={paidAmount}
+            onChange={(e) => setPaidAmount(e.target.value)}
             placeholder="0"
-            className="flex-1 bg-transparent border-b border-neutral-600 py-1 text-white focus:outline-none"
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-          <label className="text-neutral-200 w-32">Due Amount -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Importe a pagar -:
+          </label>
           <input
             type="number"
-            name="dueAmount"
-            value={form.dueAmount}
-            onChange={handleChange}
-            className="flex-1 bg-transparent border-b border-neutral-600 py-1 text-white focus:outline-none"
+            value={dueAmount}
+            onChange={(e) => setDueAmount(e.target.value)}
+            placeholder="0"
+            className="flex-1 bg-transparent border-b border-neutral-700 text-white py-1 focus:outline-none focus:border-[#84CC16]"
           />
         </div>
 
-        <div className="flex items-center justify-between pb-2">
-          <label className="text-neutral-200 w-32">Payment Method -:</label>
+        <div className="flex items-center gap-3">
+          <label className="w-28 text-[#84CC16] font-bold shrink-0">
+            Método de pago -:
+          </label>
           <select
-            name="paymentMethod"
-            value={form.paymentMethod}
-            onChange={handleChange}
-            className="flex-1 bg-[#141414] text-white font-semibold border border-neutral-700 rounded px-2 py-1"
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="flex-1 bg-[#141414] border border-neutral-700 rounded px-2.5 py-1.5 text-white font-semibold focus:outline-none"
           >
-            <option value="Cash">Cash</option>
-            <option value="Card">Card</option>
-            <option value="Transfer">Transfer</option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="QR">QR</option>
           </select>
         </div>
-
-        {error && <p className="text-red-400 text-center">{error}</p>}
 
         <div className="pt-2 flex justify-center">
           <button
             type="submit"
             disabled={saving}
-            className="px-8 py-2 rounded-full bg-[#1e1e1e] hover:bg-[#84CC16] hover:text-black text-white font-bold border border-[#84CC16] transition cursor-pointer disabled:opacity-50"
+            className="px-8 py-2 rounded-full bg-[#141414] hover:bg-[#1e1e1e] text-[#84CC16] font-bold text-xs border border-[#84CC16] cursor-pointer disabled:opacity-50"
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Guardando..." : "Guardar"}
           </button>
         </div>
       </form>
