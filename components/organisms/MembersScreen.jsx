@@ -2,6 +2,15 @@
 import { useEffect, useState } from "react";
 import GymLogo from "../atoms/GymLogo";
 
+function getMemberAvatar(member, index) {
+  if (member.avatar && member.avatar.startsWith("http")) return member.avatar;
+  if (member.photo && member.photo.startsWith("http")) return member.photo;
+  const seed = encodeURIComponent(
+    String(member.id || member.name || member.fullName || index)
+  );
+  return `https://i.pravatar.cc/150?u=${seed}`;
+}
+
 export default function MembersScreen({
   selectedPlan,
   onOpenAddMember,
@@ -121,11 +130,11 @@ export default function MembersScreen({
 
         {!loading && !error && (
           <div className="grid grid-cols-2 gap-2">
-            {filteredMembers.map((member) => {
+            {filteredMembers.map((member, index) => {
               const memberName = member.name || member.fullName || "Member";
               return (
                 <div
-                  key={member.id}
+                  key={member.id || index}
                   className="relative rounded-xl bg-[#101010] border border-[#84CC16]/80 p-2 flex flex-col justify-between"
                 >
                   {/* Botón eliminar arriba a la derecha */}
@@ -138,15 +147,17 @@ export default function MembersScreen({
                     🗑
                   </button>
 
-                  {/* Avatar circular */}
+                  {/* Avatar circular distinto por usuario */}
                   <div className="flex justify-center mt-0.5">
                     <img
-                      src={
-                        member.avatar ||
-                        member.photo ||
-                        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=120&q=80"
-                      }
+                      src={getMemberAvatar(member, index)}
                       alt={memberName}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
+                          memberName + index
+                        )}`;
+                      }}
                       className="w-11 h-11 rounded-full object-cover border border-[#84CC16]"
                     />
                   </div>
