@@ -1,8 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPlans, Plan } from "../../services/api.ts";
+import { useRouter } from "next/navigation";
 import "./VistaPlanes.css";
+
+interface Plan {
+  id: string;
+  name: string;
+  price: string;
+  description: string;
+}
 
 const DEFAULT_PLANS: Plan[] = [
   {
@@ -29,53 +36,41 @@ const DEFAULT_PLANS: Plan[] = [
 ];
 
 export default function VistaPlanes() {
+  const router = useRouter();
   const [plans, setPlans] = useState<Plan[]>(DEFAULT_PLANS);
 
   useEffect(() => {
-    getPlans()
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
+    fetch("https://6b0045397fc363ccff09fc19.mockapi.io/plans")
+      .then(async (res) => {
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) {
           setPlans(data);
         }
       })
-      .catch(() => {
-        setPlans(DEFAULT_PLANS);
-      });
+      .catch(() => {});
   }, []);
 
   return (
-    <section className="plan-screen">
-      <div className="plan-screen__top">
-        <div className="plan-screen__badge">⚡</div>
-        <h1 className="plan-screen__title">Select Your Plan</h1>
-        <p className="plan-screen__subtitle">7 Days Free Trial</p>
-      </div>
-
-      {plans.map((plan, idx) => {
-        const features = (plan.description || "")
-          .split("|")
-          .map((f) => f.trim())
-          .filter(Boolean);
-
-        const priceText =
-          typeof plan.price === "number"
-            ? `${plan.price}$ ${plan.duration || "Per Year"}`
-            : plan.price || "40$ Per Year";
-
-        return (
-          <div key={plan.id ?? idx} className="plan-box">
-            <div className="plan-box__name">{plan.name || "STANDARD"}</div>
-            <div className="plan-box__price">{priceText}</div>
-            <ul className="plan-box__list">
-              {features.map((feat, i) => (
-                <li key={i} className="plan-box__item">
-                  {feat}
-                </li>
+    <div className="plans-container">
+      {plans.map((plan) => (
+        <div
+          key={plan.id}
+          className="plan-card"
+          onClick={() => router.push("/miembros")}
+        >
+          <h2>{plan.name}</h2>
+          <p>{plan.price}</p>
+          <ul>
+            {String(plan.description || "")
+              .split("|")
+              .filter(Boolean)
+              .map((item, idx) => (
+                <li key={idx}>★ {item}</li>
               ))}
-            </ul>
-          </div>
-        );
-      })}
-    </section>
+          </ul>
+        </div>
+      ))}
+    </div>
   );
 }
