@@ -1,16 +1,22 @@
-import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import "./globals.css";
+import FloatingAddButton from "../components/FloatingAddButton";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Gym Management",
-  description: "Gestión de planes y miembros",
+  description: "Gestión de miembros del gimnasio",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        {children}
+        <FloatingAddButton />
+      </body>
     </html>
   );
 }
