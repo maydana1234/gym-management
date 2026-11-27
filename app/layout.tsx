@@ -1,5 +1,4 @@
 import "./globals.css";
-import FloatingAddButton from "../components/FloatingAddButton";
 
 export const metadata = {
   title: "Gym Management",
@@ -13,10 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>
-        {children}
-        <FloatingAddButton />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
