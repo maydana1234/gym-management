@@ -1,0 +1,53 @@
+/* Planes */
+.plans-screen {
+  padding: 20px 14px 30px;
+  align-items: center;
+}
+.gym-logo {
+  width: 64px; height: 64px; border-radius: 9999px; border: 2px solid #d4d4d8;
+  background: #111113; color: #fff; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; font-size: 8px; font-weight: 800;
+  text-align: center; line-height: 1.15; margin-bottom: 10px;
+}
+.plans-title, .plans-sub { font-size: 22px; font-weight: 700; color: #84cc16; text-align: center; }
+.plans-sub { font-size: 13px; font-weight: 400; margin: 4px 0 16px; }
+.plans-list { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+.plan-card { border: 1.5px solid #84cc16; border-radius: 16px; padding: 14px 16px 18px; background: #050505; color: #fff; cursor: pointer; }
+.plan-name { text-align: center; font-size: 18px; font-weight: 800; color: #84cc16; }
+.plan-price { text-align: center; font-size: 13px; font-weight: 700; color: #a3e635; margin: 4px 0 10px; }
+.plan-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; color: #f4f4f5; }
+
+/* Buscador, filtros y lista de miembros */
+.search-bar, .search-container { margin: 10px 12px 6px; display: flex; align-items: center; gap: 8px; }
+.search-bar input, .search-container input { flex: 1; background: #09090b; color: #fff; border: 1px solid #84cc16; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; }
+.member-filters, .filters-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 6px 12px 10px; }
+.member-filters select, .filters-row select, .filter-select { background: #000; color: #a3e635; border: 1.5px solid #84cc16; border-radius: 10px; padding: 6px 8px; font-size: 11px; font-weight: 600; outline: none; width: 100%; }
+.members-content > div, .member-list, .members-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+.members-content > form, .members-content > .member-form { display: flex; flex-direction: column; }
+.member-card { background: #050505; border: 1.5px solid #84cc16; border-radius: 16px; padding: 10px 6px 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; position: relative; font-size: 11px; }
+
+/* Formulario */
+.member-form { display: flex; flex-direction: column; gap: 11px; padding: 6px 4px 20px; }
+.form-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.form-row > label, .radio-group label, .date-range span { color: #84cc16; font-size: 13px; font-weight: 700; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+.radio-group label, .date-range span { font-size: 12px; font-weight: 600; }
+.member-form input[type="text"], .member-form input[type="tel"], .member-form input[type="number"], .member-form input[type="date"], .member-form select { background: #000; color: #fff; border: none; border-bottom: 1px dotted #84cc16; padding: 4px 6px; font-size: 12px; outline: none; flex: 1; width: 100%; }
+.member-form select { border-bottom-style: solid; }
+.radio-group, .date-range, .photo-box { display: flex; align-items: center; gap: 10px; }
+.measures-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; flex: 1; }
+.photo-preview { width: 36px; height: 36px; border-radius: 9999px; object-fit: cover; border: 1.5px solid #84cc16; }
+.upload-btn { border: 1px solid #84cc16; border-radius: 8px; padding: 5px 12px; font-size: 12px; color: #fff; background: #09090b; cursor: pointer; }
+.save-btn { margin: 12px auto 0; background: #000; color: #fff; border: 2px solid #84cc16; border-radius: 9999px; padding: 8px 34px; font-size: 15px; font-weight: 700; cursor: pointer; }
+
+/* Barra inferior */
+nav, .bottom-nav, .bottom-navigation {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 412px; height: 62px; background: #18181b;
+  border-top: 1px solid #27272a; display: grid; grid-template-columns: repeat(5, 1fr);
+  align-items: center; z-index: 50;
+}
+nav button, nav a, .bottom-nav button, .bottom-nav a, .bottom-navigation button, .bottom-navigation a {
+  background: transparent; border: none; color: #e4e4e7; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; font-size: 10px; font-weight: 600; text-decoration: none; cursor: pointer; height: 100%;
+}

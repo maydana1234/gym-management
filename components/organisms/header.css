@@ -1,0 +1,30 @@
+/* components/organisms/header.css */
+.top-header {
+  background-color: #84cc16;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.top-header__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top-header__icon-btn {
+  background: transparent;
+  border: none;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.top-header__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+}

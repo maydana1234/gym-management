@@ -1,0 +1,64 @@
+/* components/organisms/plans.css */
+.plans-container {
+  flex: 1;
+  background-color: #000000;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.plans-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.plans-header__title {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #84cc16;
+}
+
+.plans-header__trial {
+  margin: 0;
+  font-size: 13px;
+  color: #84cc16;
+}
+
+.plan-card {
+  border: 1.5px solid #84cc16;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background-color: #050505;
+  box-shadow: 0 0 12px rgba(132, 204, 22, 0.25);
+  cursor: pointer;
+}
+
+.plan-card__title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #84cc16;
+}
+
+.plan-card__price {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #84cc16;
+  margin: 3px 0 8px;
+}
+
+.plan-card__features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

@@ -1,0 +1,53 @@
+/* components/organisms/memberForm.css */
+.member-form {
+  padding: 12px 14px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #000000;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.member-form__radios {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.member-form__upload {
+  background-color: #050505;
+  color: #ffffff;
+  border: 1px solid #84cc16;
+  border-radius: 8px;
+  padding: 4px 14px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.member-form__measures {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 10px;
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.member-form__select {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-bottom: 1.5px dotted #84cc16;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 4px;
+  outline: none;
+}
+
+.member-form__submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}

@@ -1,0 +1,85 @@
+.plan-screen {
+  flex: 1;
+  background-color: #000000;
+  padding: 12px 14px 74px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.plan-screen__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.plan-screen__badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 9999px;
+  border: 2px solid #84cc16;
+  background-color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.plan-screen__title {
+  margin: 4px 0 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #84cc16;
+}
+
+.plan-screen__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #84cc16;
+}
+
+.plan-box {
+  border: 1.5px solid #84cc16;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background-color: #050505;
+  box-shadow: 0 0 12px rgba(132, 204, 22, 0.25);
+}
+
+.plan-box__name {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #84cc16;
+  letter-spacing: 0.5px;
+}
+
+.plan-box__price {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #84cc16;
+  margin: 3px 0 8px 0;
+}
+
+.plan-box__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.plan-box__item::before {
+  content: "★ ";
+  color: #ffffff;
+  margin-right: 4px;
+}
