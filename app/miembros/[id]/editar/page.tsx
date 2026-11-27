@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import "../../../../components/organisms/members.css";
 import EditarMiembroForm from "./EditarMiembroForm";
 
